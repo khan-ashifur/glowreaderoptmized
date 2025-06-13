@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import TypingOutput from './components/TypingOutput';
 
+const BASE_URL = import.meta.env.VITE_API_URL; // ✅ Use env for security
+
 function App() {
   const [skinType, setSkinType] = useState('');
   const [customSkinType, setCustomSkinType] = useState('');
@@ -17,7 +19,7 @@ function App() {
     const finalConcern = concern === 'Other' ? customConcern : concern;
 
     try {
-      const res = await fetch('http://localhost:4000/analyze', {
+      const res = await fetch(`${BASE_URL}/api/analyze`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
