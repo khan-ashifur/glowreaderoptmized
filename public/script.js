@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Show modal on page load immediately as a flex container to center it
     if (welcomeModal) {
-        welcomeModal.style.display = 'flex'; 
+        welcomeModal.style.display = 'flex';
     }
 
     // Event listener to close the modal when the "Let's Glow!" button is clicked
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loader = document.getElementById('loader');
     const resultContainer = document.getElementById('result-container');
     // Assuming historyPanel is not active yet, but keeping the reference if needed later
-    // const historyPanel = document.getElementById('history-panel'); 
+    // const historyPanel = document.getElementById('history-panel');
 
     // Function to toggle display of skin/makeup fields based on selection
     const handleModeChange = () => {
@@ -63,14 +63,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (!response.ok) {
                     // Handle server errors
-                    const errorDetails = await response.text(); 
+                    const errorDetails = await response.text();
                     throw new Error(`Server error: ${response.statusText}. Details: ${errorDetails}`);
                 }
 
                 const result = await response.json(); // Parse the JSON response from the server
 
                 console.log("--- DEBUGGING Frontend Output ---");
-                console.log("1. Received full response object from server:", result); 
+                console.log("1. Received full response object from server:", result);
 
                 const analysisText = result.analysisText; // Extract the main analysis markdown
                 const skinConcerns = result.skinConcerns; // Extract skin concerns (will be undefined for makeup mode)
@@ -114,9 +114,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     // Append the main analysis markdown, parsed into HTML
+                    // IMPORTANT CHANGE HERE: prose class applied to an inner div for better layout control
                     outputHtml += `
-                        <div class="result-card p-6 bg-white shadow-lg rounded-xl prose max-w-none">
-                            ${marked.parse(analysisText)}
+                        <div class="result-card p-6 bg-white shadow-lg rounded-xl">
+                            <div class="prose max-w-full">
+                                ${marked.parse(analysisText)}
+                            </div>
                         </div>
                     `;
 

@@ -63,14 +63,189 @@ body {
   margin-bottom: 1rem;
 }
 
-/* Ensure Markdown rendered content has proper spacing within the prose class */
+/* --- AI Output Section Styling (UPDATED FOR INNER PROSE DIV) --- */
 
-.prose h1, .prose h2, .prose h3, .prose h4, .prose p, .prose ul, .prose ol, .prose li {
-  margin-bottom: 1em;
-  /* Add some spacing for readability */
+/* Base styling for the container that holds the markdown output */
+
+/* Removed .prose from here as it's now on an inner div */
+
+.result-card {
+  padding: 0;
+  /* Adjust padding if necessary for overall card */
+  margin-top: 2rem;
+  /* Space from the form */
+  width: 100%;
+  /* Ensure it takes full width */
+  max-width: none;
+  /* Ensure it doesn't get limited by a default max-width */
 }
 
-.prose ul, .prose ol {
-  padding-left: 1.5em;
-  /* Indent lists */
+/* Styling for the markdown content itself, inside the result-card */
+
+.result-card .prose {
+  /* IMPORTANT CHANGE: space between .result-card and .prose */
+  padding: 1.5rem;
+  /* Add padding inside the prose content */
+}
+
+/* Style for the main intro section's H1 */
+
+.result-card .prose h1:first-of-type {
+  text-align: center;
+  color: #DB2777;
+  /* A vibrant pink */
+  margin-bottom: 0.5rem;
+  padding-top: 0;
+  /* Already inside the card's padding */
+}
+
+/* Style for the personalized greeting H3 */
+
+.result-card .prose h3:first-of-type {
+  /* This targets the greeting after the H1 */
+  text-align: center;
+  color: #4A5568;
+  /* A sophisticated gray */
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #FBCFE8;
+  /* Light pink border for subtle separation */
+}
+
+/* Styling for the horizontal rule (--- in markdown) to act as a strong separator */
+
+.result-card .prose hr {
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+  border: none;
+  border-top: 2px dashed #FBCFE8;
+  /* Dashed pink line for visual break */
+  width: 80%;
+  /* Make the line shorter for elegance */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Styling for major section headings (e.g., Deep Dive, Personalized Daily Skincare Routine, Glam Strategy) */
+
+.result-card .prose h4 {
+  background-color: #FDF2F8;
+  /* Very light pink background for section headers */
+  color: #9D174D;
+  /* Deeper pink text */
+  padding: 1.2rem 1.5rem;
+  /* More padding for a bolder look */
+  border-radius: 10px;
+  margin-top: 3rem;
+  /* Generous space before a new major section */
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  /* Soft shadow for a lifted effect */
+  border-left: 6px solid #EC4899;
+  /* Accent border on the left */
+  font-size: 1.75rem;
+  /* Larger font size */
+  font-weight: 700;
+}
+
+/* Styling for sub-headings within routines (e.g., Morning Routine, Evening Routine) */
+
+.result-card .prose h5 {
+  color: #8B5CF6;
+  /* A vibrant purple for sub-sections */
+  font-weight: 700;
+  margin-top: 2.5rem;
+  /* Space before sub-section */
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed #DDD6FE;
+  /* Light purple dashed line */
+  font-size: 1.5rem;
+  /* Slightly larger font */
+}
+
+/* Styling for individual steps within the routine (list items) */
+
+.result-card .prose ol li,
+.result-card .prose ul li {
+  background-color: #FCF7F9;
+  /* Very light pink background for individual points */
+  border: 1px solid #FBDCEB;
+  /* Subtle pink border */
+  border-radius: 10px;
+  padding: 1.5rem;
+  /* More padding inside each step */
+  margin-bottom: 1.2rem;
+  /* Space between steps */
+  line-height: 1.7;
+  /* Improved readability */
+  box-shadow: 0 3px 6px rgba(0,0,0,0.04);
+  /* Soft shadow for card-like feel */
+}
+
+.result-card .prose ol li:last-child,
+.result-card .prose ul li:last-child {
+  margin-bottom: 0;
+  /* No margin after the last list item */
+}
+
+/* Enhance strong text (like product names) */
+
+.result-card .prose strong {
+  color: #C026D3;
+  /* A bright magenta for emphasis */
+  font-weight: 700;
+}
+
+/* Specific styling for product names inside list items to make them pop */
+
+.result-card .prose li strong {
+  color: #AD1457;
+  /* Deeper pink for product names */
+  font-size: 1.1em;
+  /* Slightly larger text for product names */
+}
+
+/* Last section: Glow-Up Inspiration */
+
+.result-card .prose p:last-of-type {
+  /* Target the very last paragraph for closing message */
+  text-align: center;
+  font-style: italic;
+  color: #6B7280;
+  /* Gray text */
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 2px solid #FBCFE8;
+  /* Solid top border for the final section */
+  font-size: 1.1rem;
+}
+
+/* Disclaimer text styling - ensure your prompt gives this a class like <p class="disclaimer-text"> */
+
+.result-card .prose .disclaimer-text {
+  /* Updated to work with inner prose */
+  font-size: 0.8em;
+  color: #9CA3AF;
+  /* Lighter gray */
+  text-align: center;
+  margin-top: 1rem;
+  padding-bottom: 1.5rem;
+  /* Add some padding to the bottom of the card */
+}
+
+/* General paragraph spacing within sections */
+
+.result-card .prose p {
+  margin-bottom: 1em;
+}
+
+/* General list indentation */
+
+.result-card .prose ul, .result-card .prose ol {
+  margin-left: 0;
+  /* Reset default list indent if using custom padding */
+  padding-left: 0;
 }
