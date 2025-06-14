@@ -79,6 +79,12 @@
     display: none !important; /* IMPORTANT: Ensures display: none is always applied when .hidden is present */
 }
 
+/* FIX: Ensure analysis-form hides correctly when .hidden is applied */
+#analysis-form.hidden {
+    display: none !important; 
+}
+
+
 /* General body styling for fonts and background */
 body {
     font-family: 'Poppins', sans-serif;
@@ -164,7 +170,7 @@ body {
 .result-card .prose ol li,
 .result-card .prose ul li {
     background-color: #FCF7F9; /* Very light pink background for individual points */
-    border: 1px solid #FBDCEB; /* Subtle pink border */
+    border: 1px solid #FBDCEB; /* Subtle border */
     border-radius: 10px;
     padding: 1.5rem; /* More padding inside each step */
     margin-bottom: 1.2rem; /* Space between steps */
@@ -216,6 +222,4 @@ body {
 
 /* General list indentation */
 .result-card .prose ul, .result-card .prose ol {
-    margin-left: 0; /* Reset default list indent if using custom padding */
-    padding-left: 0;
-}
+    margin-left: 0; /* Reset default list indent

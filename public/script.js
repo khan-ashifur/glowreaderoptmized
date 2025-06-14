@@ -26,25 +26,141 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultContainer = document.getElementById('result-container');
     const backToMenuBtn = document.getElementById('back-to-menu-btn');
 
+    const historyPanel = document.getElementById('history-panel');
+    const historyList = document.getElementById('history-list');
+    const clearHistoryBtn = document.getElementById('clear-history-btn');
+    const toggleHistoryBtn = document.getElementById('toggle-history-btn');
+
     let loaderInterval; // To store the interval ID for clearing
+    const HISTORY_KEY = 'glowreader_analysis_history'; // Key for localStorage
 
-    const handleModeChange = () => {
-        if (!modeSelect || !skinFields || !makeupFields) return;
-        if (modeSelect.value === 'skin-analyzer') {
-            skinFields.style.display = 'block';
-            makeupFields.style.display = 'none';
-        } else {
-            skinFields.style.display = 'none';
-            makeupFields.style.display = 'block';
+    // --- History Functions ---
+    function getHistory() {
+        try {
+            const history = localStorage.getItem(HISTORY_KEY);
+            return history ? JSON.parse(history) : [];
+        } catch (e) {
+            console.error("Error loading history from localStorage:", e);
+            return [];
         }
-    };
-
-    if (modeSelect) {
-        modeSelect.addEventListener('change', handleModeChange);
     }
-    handleModeChange(); // Call once on load to set initial state
 
-    // Function to cycle through personalized loader messages
+    function saveAnalysis(mode, inputs, analysisSummary, fullAnalysisHtml) {
+        const history = getHistory();
+        const newEntry = {
+            id: Date.now(), // Unique ID for the entry
+            timestamp: new Date().toISOString(),
+            mode: mode,
+            inputs: inputs, // Store a copy of the form inputs
+            analysisSummary: analysisSummary, // A brief summary text
+            fullAnalysisHtml: fullAnalysisHtml // Full HTML of the analysis for re-display
+        };
+        history.unshift(newEntry); // Add to the beginning (most recent first)
+        // Limit history to, say, 10 items
+        if (history.length > 10) {
+            history.pop();
+        }
+        try {
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+            console.log("Analysis saved to history:", newEntry.id);
+        } catch (e) {
+            console.error("Error saving history to localStorage:", e);
+        }
+    }
+
+    function renderHistoryItem(item) {
+        const li = document.createElement('li');
+        li.className = 'history-item';
+        li.dataset.id = item.id; // Store ID for lookup
+
+        const date = new Date(item.timestamp).toLocaleString();
+        const modeText = item.mode === 'skin-analyzer' ? 'Skin Analysis' : 'Makeup Tutorial';
+
+        li.innerHTML = `
+            <div class="history-item-header">
+                <span class="history-item-mode">${modeText}</span>
+                <span class="history-item-date">${date}</span>
+            </div>
+            <p class="history-item-summary">${item.analysisSummary}</p>
+        `;
+
+        li.addEventListener('click', () => {
+            displayHistoricalAnalysis(item);
+        });
+        return li;
+    }
+
+    function loadHistory() {
+        const history = getHistory();
+        historyList.innerHTML = ''; // Clear current list
+        if (history.length === 0) {
+            const emptyMsg = document.createElement('li');
+            emptyMsg.textContent = 'No past analyses yet. Start a new one!';
+            emptyMsg.className = 'text-gray-500 italic p-4';
+            historyList.appendChild(emptyMsg);
+        } else {
+            history.forEach(item => {
+                historyList.appendChild(renderHistoryItem(item));
+            });
+        }
+        console.log("History loaded and rendered.");
+    }
+
+    function displayHistoricalAnalysis(item) {
+        // Hide current UI
+        analysisForm.classList.add('hidden'); // Use class for consistency
+        historyPanel.classList.add('hidden'); // Hide history panel
+        loaderOverlay.classList.add('hidden'); // Ensure loader is hidden
+        
+        // Show result container and populate
+        resultContainer.innerHTML = ''; // Clear current results
+        resultContainer.classList.remove('hidden'); // Show result container
+
+        const mainAnalysisProseWrapper = document.createElement('div');
+        mainAnalysisProseWrapper.className = 'result-card p-6 bg-white shadow-lg rounded-xl';
+        
+        const proseContentContainer = document.createElement('div');
+        proseContentContainer.className = 'prose max-w-full';
+        proseContentContainer.innerHTML = item.fullAnalysisHtml; // Use saved HTML directly
+        
+        mainAnalysisProseWrapper.appendChild(proseContentContainer);
+        resultContainer.appendChild(mainAnalysisProseWrapper);
+
+        // For historical display, make all sections instantly visible
+        Array.from(proseContentContainer.querySelectorAll('.fade-in-section')).forEach(section => {
+            section.classList.add('is-visible');
+            section.style.opacity = 1;
+            section.style.transform = 'translateY(0)';
+        });
+        
+        backToMenuBtn.classList.remove('hidden');
+        console.log("Historical analysis displayed:", item.id);
+    }
+
+
+    function clearHistory() {
+        if (confirm('Are you sure you want to clear all your past analyses? This cannot be undone.')) {
+            localStorage.removeItem(HISTORY_KEY);
+            loadHistory(); // Reloads with empty message
+            console.log("History cleared.");
+        }
+    }
+
+    function toggleHistoryPanel() {
+        if (historyPanel.classList.contains('hidden')) {
+            historyPanel.classList.remove('hidden');
+            analysisForm.classList.add('hidden'); // Hide form
+            resultContainer.classList.add('hidden'); // Hide results
+            backToMenuBtn.classList.add('hidden'); // Hide back button
+            loaderOverlay.classList.add('hidden'); // Ensure loader is hidden
+            loadHistory(); // Load history fresh each time it's opened
+        } else {
+            historyPanel.classList.add('hidden');
+            analysisForm.classList.remove('hidden'); // Show form
+        }
+    }
+
+    // --- Loader Functions ---
     function startLoaderMessages(mode, formData) {
         let messages = [];
         let currentMessageIndex = 0;
@@ -95,34 +211,56 @@ document.addEventListener('DOMContentLoaded', () => {
         loaderMessageText.textContent = 'Analyzing... Please wait, Aura is crafting your magic! ✨'; // Reset to default
     }
 
-    // --- Back to Main Menu Button Functionality ---
-    if (backToMenuBtn) {
-        backToMenuBtn.addEventListener('click', () => {
-            resultContainer.classList.add('hidden'); // Hide the analysis results
-            resultContainer.innerHTML = ''; // Clear results content
-            backToMenuBtn.classList.add('hidden'); // Hide the back button itself
-            analysisForm.classList.remove('hidden'); // Show the form again
-            analysisForm.reset(); // Optionally reset all form fields
-            handleModeChange(); // Ensure correct fields are visible for the default mode
-        });
+    // --- Fix: Changed to function declaration for hoisting ---
+    function handleModeChange() { // Changed from const handleModeChange = () => { ... }
+        if (!modeSelect || !skinFields || !makeupFields) return;
+        if (modeSelect.value === 'skin-analyzer') {
+            skinFields.style.display = 'block';
+            makeupFields.style.display = 'none';
+        } else {
+            skinFields.style.display = 'none';
+            makeupFields.style.display = 'block';
+        }
     }
 
-    // --- Part 3: Form Submission Logic with Section-by-Section Animation ---
+
+    // --- Initial setup on DOMContentLoaded ---
+    loadHistory(); // Load history when the page loads
+
+    // --- Event Listeners for History UI ---
+    if (toggleHistoryBtn) {
+        toggleHistoryBtn.addEventListener('click', toggleHistoryPanel);
+        console.log('DEBUG: History toggle button listener attached.');
+    }
+    if (clearHistoryBtn) {
+        clearHistoryBtn.addEventListener('click', clearHistory);
+        console.log('DEBUG: Clear history button listener attached.');
+    }
+
+    // --- Standard UI Interaction (Mode Change) ---
+    if (modeSelect) {
+        modeSelect.addEventListener('change', handleModeChange);
+    }
+    handleModeChange(); // Call once on load to set initial state
+
+
+    // --- Form Submission Logic with Section-by-Section Animation ---
     if (analysisForm) {
         analysisForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
-            // Hide the form and show the loader overlay
-            analysisForm.classList.add('hidden');
+            // Hide form and results, show loader overlay
+            analysisForm.classList.add('hidden'); // Use class for consistency
+            resultContainer.classList.add('hidden');
             resultContainer.innerHTML = ''; // Clear previous results
-            resultContainer.classList.add('hidden'); // Hide results until ready
-            backToMenuBtn.classList.add('hidden'); // Ensure back button is hidden initially
-            loaderOverlay.classList.remove('hidden'); // Show the full-screen loader
+            backToMenuBtn.classList.add('hidden');
+            historyPanel.classList.add('hidden'); // Ensure history panel is hidden
+            loaderOverlay.classList.remove('hidden');
 
             const formData = new FormData(analysisForm);
             const selectedMode = formData.get('mode');
 
-            startLoaderMessages(selectedMode, formData); // Start personalized loader messages
+            startLoaderMessages(selectedMode, formData);
 
             try {
                 const response = await fetch('/api/vision', {
@@ -137,8 +275,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const result = await response.json();
 
-                stopLoaderMessages(); // Stop loader messages once response is received
-                loaderOverlay.classList.add('hidden'); // Hide the full-screen loader
+                stopLoaderMessages();
+                loaderOverlay.classList.add('hidden');
 
                 console.log("--- DEBUGGING Frontend Output ---");
                 console.log("1. Received full response object from server:", result);
@@ -146,105 +284,118 @@ document.addEventListener('DOMContentLoaded', () => {
                 const analysisText = result.analysisText;
                 const skinConcerns = result.skinConcerns;
 
-                // --- Build HTML and Animate Sections ---
-
-                // 1. Handle skin concerns (if any) - this part appears instantly
-                if (skinConcerns && Object.keys(skinConcerns).length > 0) {
-                    console.log("Generating HTML for skin concerns progress bars.");
-                    const skinConcernsCard = document.createElement('div');
-                    skinConcernsCard.className = 'result-card mb-6 p-6 bg-white shadow-lg rounded-xl fade-in-section';
-                    let concernsHtml = `<h2 class="text-2xl font-bold text-pink-600 mb-4">Your Skin Concerns at a Glance!</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
-                    for (const concernName in skinConcerns) {
-                        if (Object.hasOwnProperty.call(skinConcerns, concernName)) {
-                            const percentage = skinConcerns[concernName];
-                            concernsHtml += `<div class="form-control mb-2"><label class="label"><span class="label-text text-gray-700 font-medium">${concernName}</span><span class="label-text-alt text-pink-500 font-semibold">${percentage}%</span></label><progress class="progress progress-primary w-full" value="${percentage}" max="100"></progress></div>`;
-                        }
-                    }
-                    concernsHtml += `</div>`;
-                    skinConcernsCard.innerHTML = concernsHtml;
-                    resultContainer.appendChild(skinConcernsCard);
-                    setTimeout(() => skinConcernsCard.classList.add('is-visible'), 50); // Small initial delay
+                // Prepare content for history and display
+                const analysisSummary = selectedMode === 'skin-analyzer'
+                    ? `Skin analysis for ${formData.get('skinType')} skin, concern: ${formData.get('skinProblem')}`
+                    : `Makeup tutorial for ${formData.get('eventType')} event (${formData.get('dressColor')} outfit)`;
+                
+                const inputsForHistory = {};
+                for (const pair of formData.entries()) {
+                    inputsForHistory[pair[0]] = pair[1];
                 }
+                const fullAnalysisHtmlContent = marked.parse(analysisText || '');
 
-                // 2. Process and animate main analysis text section by section
+                // Save to history before displaying
+                saveAnalysis(selectedMode, inputsForHistory, analysisSummary, fullAnalysisHtmlContent);
+
+
+                // --- Display Analysis Content with Animation ---
                 const mainAnalysisProseWrapper = document.createElement('div');
-                mainAnalysisProseWrapper.className = 'result-card p-6 bg-white shadow-lg rounded-xl'; // Apply outer card styling here
+                mainAnalysisProseWrapper.className = 'result-card mb-6 p-6 bg-white shadow-lg rounded-xl';
+                resultContainer.appendChild(mainAnalysisProseWrapper); 
 
-                // Create a temporary div to parse markdown and then extract its children
-                const tempProcessorDiv = document.createElement('div');
-                tempProcessorDiv.innerHTML = marked.parse(analysisText || ''); // Parse all markdown to HTML here
+                const proseContentContainer = document.createElement('div');
+                proseContentContainer.className = 'prose max-w-full';
+                mainAnalysisProseWrapper.appendChild(proseContentContainer);
 
-                const proseContentContainer = document.createElement('div'); // This will hold the animated sections
-                proseContentContainer.className = 'prose max-w-full'; // Apply prose styles to this container
-                mainAnalysisProseWrapper.appendChild(proseContentContainer); // Append to main card wrapper
+                // Start DOM manipulation for section animation
+                try {
+                    const tempProcessorDiv = document.createElement('div');
+                    tempProcessorDiv.innerHTML = fullAnalysisHtmlContent;
+                    
+                    let currentSectionElements = [];
+                    const sectionDelay = 200;
+                    let currentAnimationDelay = 0;
 
-                let currentSectionElements = [];
-                const sectionDelay = 200; // Milliseconds between each section appearing
-                let currentAnimationDelay = 0; // Cumulative delay
+                    Array.from(tempProcessorDiv.children).forEach(child => {
+                        // Start a new animated section if it's a major heading (H1, H3, H4, H5) or an HR
+                        // AND we've already collected some content for the *current* section.
+                        if (['H1', 'H3', 'H4', 'H5', 'HR'].includes(child.tagName) && currentSectionElements.length > 0) {
+                            const sectionWrapper = document.createElement('div');
+                            sectionWrapper.className = 'fade-in-section';
+                            sectionWrapper.style.marginBottom = '2rem';
+                            sectionWrapper.style.padding = '0 1.5rem';
+                            sectionWrapper.style.maxWidth = '100%';
+                            
+                            currentSectionElements.forEach(elHtml => sectionWrapper.innerHTML += elHtml);
+                            proseContentContainer.appendChild(sectionWrapper);
+                            
+                            setTimeout(() => {
+                                sectionWrapper.classList.add('is-visible');
+                            }, currentAnimationDelay);
+                            currentAnimationDelay += sectionDelay;
 
-                // Loop through the children of the parsed markdown
-                Array.from(tempProcessorDiv.children).forEach(child => {
-                    // Check if we need to start a NEW animated section.
-                    // A new section starts if:
-                    // 1. It's a major heading (H1, H3, H4, H5) or an HR
-                    // AND
-                    // 2. We've already collected some content for the *current* section (to avoid empty wrappers)
-                    // OR
-                    // 3. It's the very first element (currentSectionElements is empty) and it's not a direct heading of a new block.
-                    // This logic is simplified: just group until a new heading/HR is hit.
+                            currentSectionElements = [];
+                        }
+                        currentSectionElements.push(child.outerHTML);
+                    });
 
-                    if (['H1', 'H3', 'H4', 'H5', 'HR'].includes(child.tagName) && currentSectionElements.length > 0) {
-                        // If we have collected elements for the previous section, create a wrapper for it
+                    // Append the very last section after the loop finishes
+                    if (currentSectionElements.length > 0) {
                         const sectionWrapper = document.createElement('div');
-                        sectionWrapper.className = 'fade-in-section'; // Add animation class
-                        sectionWrapper.style.marginBottom = '2rem'; // Spacing between animated sections
-                        sectionWrapper.style.padding = '0 1.5rem'; // Add padding inside this animated section
-                        sectionWrapper.style.maxWidth = '100%'; // Ensure it fills container
-                        
-                        currentSectionElements.forEach(elHtml => sectionWrapper.innerHTML += elHtml); // Add collected HTML to wrapper
-                        proseContentContainer.appendChild(sectionWrapper); // Append to the main prose container
-                        
+                        sectionWrapper.className = 'fade-in-section';
+                        sectionWrapper.style.marginBottom = '2rem';
+                        sectionWrapper.style.padding = '0 1.5rem';
+                        sectionWrapper.style.maxWidth = '100%';
+                        currentSectionElements.forEach(elHtml => sectionWrapper.innerHTML += elHtml);
+                        proseContentContainer.appendChild(sectionWrapper);
                         setTimeout(() => {
                             sectionWrapper.classList.add('is-visible');
                         }, currentAnimationDelay);
-                        currentAnimationDelay += sectionDelay; // Increment delay for next section
-
-                        currentSectionElements = []; // Reset for the new section
                     }
-                    currentSectionElements.push(child.outerHTML); // Collect current element's HTML (as string)
-                });
+                    
+                    // Show results and back button after animations are scheduled
+                    resultContainer.classList.remove('hidden');
+                    backToMenuBtn.classList.remove('hidden');
+                    console.log('DEBUG: Result container and back button should now be visible.');
 
-                // After the loop, append any remaining elements as the last section
-                if (currentSectionElements.length > 0) {
-                    const sectionWrapper = document.createElement('div');
-                    sectionWrapper.className = 'fade-in-section';
-                    sectionWrapper.style.marginBottom = '2rem';
-                    sectionWrapper.style.padding = '0 1.5rem';
-                    sectionWrapper.style.maxWidth = '100%';
-                    currentSectionElements.forEach(elHtml => sectionWrapper.innerHTML += elHtml);
-                    proseContentContainer.appendChild(sectionWrapper);
-                    setTimeout(() => {
-                        sectionWrapper.classList.add('is-visible');
-                    }, currentAnimationDelay);
+                } catch (domError) {
+                    console.error('CRITICAL DOM MANIPULATION ERROR during section animation:', domError);
+                    resultContainer.innerHTML = `<div class="text-red-500 p-4 border border-red-300 rounded-lg">A critical error occurred while preparing analysis content: ${domError.message}. Please try again.</div>`;
+                    resultContainer.classList.remove('hidden');
+                    backToMenuBtn.classList.remove('hidden');
                 }
 
-                resultContainer.appendChild(mainAnalysisProseWrapper); // Append the main analysis card after all sections are processed
-
-                resultContainer.classList.remove('hidden'); // Show results container
-                backToMenuBtn.classList.remove('hidden'); // Show the back button
-
-            } catch (error) {
-                console.error('ERROR during analysis:', error);
+            } catch (error) { // Catch for fetch errors
+                console.error('ERROR during analysis fetch:', error);
                 if (resultContainer) {
                     resultContainer.innerHTML = `<div class="text-red-500 p-4 border border-red-300 rounded-lg">An error occurred during analysis: ${error.message}. Please try again, and ensure your photo is clear!</div>`;
-                    resultContainer.classList.remove('hidden'); // Show error message
+                    resultContainer.classList.remove('hidden');
+                    backToMenuBtn.classList.remove('hidden');
                 }
             } finally {
-                // Ensure form is visible if error or for retrying, hide loader
-                analysisForm.classList.remove('hidden');
+                analysisForm.classList.add('hidden'); // Use class for consistency
                 loaderOverlay.classList.add('hidden');
                 stopLoaderMessages();
             }
         });
     }
+
+    // ATTACH LISTENER FOR backToMenuBtn *AFTER* all other DOM elements are guaranteed to be present and available.
+    // This listener must be at the very end of DOMContentLoaded to ensure the element exists.
+    if (backToMenuBtn) {
+        backToMenuBtn.addEventListener('click', () => {
+            console.log('DEBUG: backToMenuBtn clicked!');
+            resultContainer.classList.add('hidden'); // Hide the analysis results
+            resultContainer.innerHTML = ''; // Clear results content
+            backToMenuBtn.classList.add('hidden'); // Hide the back button itself
+            analysisForm.classList.remove('hidden'); // Use class for consistency
+            analysisForm.reset(); // Optionally reset all form fields
+            handleModeChange(); // Ensure correct fields are visible for the default mode
+            console.log('DEBUG: UI reset complete.');
+        });
+    } else {
+        console.error('ERROR: backToMenuBtn element not found on DOMContentLoaded!');
+    }
+
 });

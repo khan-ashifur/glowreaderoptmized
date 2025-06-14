@@ -29,9 +29,13 @@
 
     <div class="main-content min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 py-12">
         <div class="container mx-auto bg-white rounded-2xl shadow-xl max-w-4xl">
-            <header class="text-center mb-10 p-6">
+            <header class="text-center mb-10 p-6 relative"> 
                 <h1 class="text-5xl font-extrabold text-gray-800 mb-3">Meet Aura <span class="text-pink-500">✨</span></h1>
-                <p class="text-lg text-gray-600">Your AI beauty BFF for personalized skin & makeup advice.</p>
+                <p class="text-lg text-gray-600 mb-0">Your AI beauty BFF for personalized skin & makeup advice.</p>
+                <button id="toggle-history-btn" class="absolute top-4 right-4 btn btn-md bg-purple-500 text-white hover:bg-purple-600 border-none shadow-md rounded-full flex items-center space-x-2 pl-4 pr-2" title="View Recent Analyses"> 
+                    <span class="font-semibold">Recent Analyses</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.202 5 7.5 5A6.5 6.5 0 001 11.5c0 1.682.68 3.206 1.875 4.291m12-4.291c1.195-.915 2.176-2.583 2.176-4.291 0-1.682-.68-3.206-1.875-4.291A6.5 6.5 0 0016.5 5c-1.702 0-3.332.477-4.519 1.253zm0 13c1.195.915 2.176 2.583 2.176 4.291 0 1.682-.68 3.206-1.875 4.291A6.5 6.5 0 017.5 19c-1.702 0-3.332-.477-4.519-1.253L4.258 17.5c.854.721 1.954 1.127 3.242 1.127 1.288 0 2.388-.406 3.242-1.127z"/></svg>
+                </button>
             </header>
 
             <form id="analysis-form" class="space-y-6 p-6">
@@ -130,7 +134,7 @@
             </div>
         </div>
 
-        <div id="history-panel" class="container mx-auto p-6 bg-white rounded-2xl shadow-xl max-w-4xl mt-8" style="display: none;">
+        <div id="history-panel" class="container mx-auto p-6 bg-white rounded-2xl shadow-xl max-w-4xl mt-8 hidden">
             <div class="history-header flex justify-between items-center mb-4">
                 <h2 class="text-3xl font-bold text-gray-800">Recent Analyses</h2>
                 <button id="clear-history-btn" class="btn btn-outline btn-error">Clear History</button>
