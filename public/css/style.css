@@ -358,31 +358,29 @@ body {
     margin-bottom: 0.6rem;
     display: flex;
     align-items: center;
-    gap: 0.4rem; /* Space between icon and text */
-}
-
-.concern-label .emoji-icon { /* Style for icons within label */
-    font-size: 1.2em;
+    gap: 0.4rem; /* Space between emoji and text */
 }
 
 .progress-bar-container {
     width: 100%; /* Full width within its item */
     background-color: #E9D5FF; /* Light purple background */
     border-radius: 8px; /* More rounded */
-    height: 12px; /* Thicker bar */
+    height: 14px; /* Thicker bar */
     overflow: hidden;
     margin-bottom: 0.6rem;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); /* Subtle inner shadow for depth */
 }
 
 .progress-bar {
-    background: linear-gradient(to right, #A78BFA, #D8B4FE); /* Purple gradient */
+    background: linear-gradient(to right, #C026D3, #E11D74); /* Vibrant gradient: Purple to Pink */
     height: 100%;
     border-radius: 8px; /* Match container border-radius */
     transition: width 0.8s ease-out; /* Smooth animation for progress */
+    box-shadow: 0 2px 5px rgba(192, 38, 211, 0.3), 0 1px 2px rgba(225, 29, 116, 0.2); /* Soft shadow for filled part */
 }
 
 .concern-percentage {
-    color: #9D174D; /* Deeper pink for percentage */
+    color: #E11D74; /* Vibrant pink for percentage */
     font-weight: bold;
     font-size: 0.9rem;
     align-self: flex-end; /* Align percentage to the right */

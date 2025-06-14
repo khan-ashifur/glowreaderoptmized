@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loaderMessageText = document.getElementById('loader-message-text');
     const resultContainer = document.getElementById('result-container');
     const backToMenuBtn = document.getElementById('back-to-menu-btn');
-    const uploadedImageDisplay = document.getElementById('uploaded-image-display'); // New: Reference to image display div
+    const uploadedImageDisplay = document.getElementById('uploaded-image-display'); // Reference to image display div
 
 
     const historyPanel = document.getElementById('history-panel');
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function displayHistoricalAnalysis(item) {
         // Hide current UI
-        analysisForm.classList.add('hidden');
+        analysisForm.classList.add('hidden'); // Use class for consistency
         historyPanel.classList.add('hidden'); // Hide history panel
         loaderOverlay.classList.add('hidden'); // Ensure loader is hidden
         
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const mainAnalysisProseWrapper = document.createElement('div');
-        mainAnalysisProseWrapper.className = 'result-card mb-6 p-6 bg-white shadow-lg rounded-xl';
+        mainAnalysisProseWrapper.className = 'result-card p-6 bg-white shadow-lg rounded-xl';
         
         const proseContentContainer = document.createElement('div');
         proseContentContainer.className = 'prose max-w-full';
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const selectedMode = formData.get('mode');
 
             // Get uploaded image data for display and history saving
-            let imageDataUrl = '';
+            let imageDataUrl = ''; // Define outside reader.onloadend
             const photoFile = formData.get('photo');
             if (photoFile) {
                 const reader = new FileReader();
@@ -336,13 +336,55 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Save to history before displaying (imageDataUrl will be available due to reader.onloadend)
                 // Use a slight delay or ensure imageDataUrl is ready if this causes issues
                 // For now, assuming it's quick enough or img is already prepended
+                // If imageDataUrl is not immediately available, saveAnalysis might get an empty string.
+                // A better approach would be to wait for reader.onloadend to call saveAnalysis,
+                // but that adds complexity to the main flow.
                 saveAnalysis(selectedMode, inputsForHistory, analysisSummary, fullAnalysisHtmlContent, imageDataUrl);
 
 
                 // --- Display Analysis Content with Animation ---
+                // 1. Handle skin concerns (if any) - this part appears instantly
+                if (selectedMode === 'skin-analyzer' && skinConcerns && Object.keys(skinConcerns).length > 0) {
+                    console.log("Generating HTML for skin concerns progress bars.");
+                    const skinConcernsCard = document.createElement('div');
+                    skinConcernsCard.className = 'skin-concerns-card fade-in-section'; // Use new class and mb-6 (margin controlled by this style)
+                    
+                    let concernsHtml = `<h2 class="skin-concerns-title">Your Skin Concerns at a Glance!</h2><div class="concerns-grid">`;
+                    
+                    // Emojis for icons
+                    const simpleIcons = {
+                        "Hydration": "💧",
+                        "Oiliness": "✨",
+                        "Pores": "🔎",
+                        "Redness": "🔴",
+                        "Elasticity": "💪",
+                        "Dark Spots": "🎯",
+                        "Wrinkles": "〰️",
+                        "Acne Breakouts": "💥"
+                    };
+
+                    Object.keys(skinConcerns).forEach(concernKey => {
+                        const percentage = skinConcerns[concernKey];
+                        concernsHtml += `
+                            <div class="concern-item">
+                                <span class="concern-label">${simpleIcons[concernKey] || ''} ${concernKey}</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: ${percentage}%;"></div>
+                                </div>
+                                <span class="concern-percentage">${percentage}%</span>
+                            </div>
+                        `;
+                    });
+                    concernsHtml += `</div>`;
+                    skinConcernsCard.innerHTML = concernsHtml;
+                    resultContainer.appendChild(skinConcernsCard);
+                    setTimeout(() => skinConcernsCard.classList.add('is-visible'), 50); // Small initial delay
+                }
+
+
                 const mainAnalysisProseWrapper = document.createElement('div');
-                mainAnalysisProseWrapper.className = 'result-card p-6 bg-white shadow-lg rounded-xl';
-                resultContainer.appendChild(mainAnalysisProseWrapper); 
+                mainAnalysisProseWrapper.className = 'result-card mb-6 p-6 bg-white shadow-lg rounded-xl'; // Main card for prose content
+                // resultContainer.appendChild(mainAnalysisProseWrapper); // Appended later after skin concerns card
 
                 const proseContentContainer = document.createElement('div');
                 proseContentContainer.className = 'prose max-w-full';
@@ -353,21 +395,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     const tempProcessorDiv = document.createElement('div');
                     tempProcessorDiv.innerHTML = fullAnalysisHtmlContent;
                     
-                    let currentSectionElements = [];
-                    const sectionDelay = 200;
-                    let currentAnimationDelay = 0;
+                    let currentSectionGroup = []; // Collects elements for the current section to be animated
+                    const sectionDelay = 200; // Milliseconds between each section appearing
+                    let currentAnimationDelay = (selectedMode === 'skin-analyzer' && skinConcerns && Object.keys(skinConcerns).length > 0) ? sectionDelay + 100 : 0; // Delay after skin concerns card if present
 
                     Array.from(tempProcessorDiv.children).forEach(child => {
                         // Start a new animated section if it's a major heading (H1, H3, H4, H5) or an HR
                         // AND we've already collected some content for the *current* section.
-                        if (['H1', 'H3', 'H4', 'H5', 'HR'].includes(child.tagName) && currentSectionElements.length > 0) {
+                        if (['H1', 'H3', 'H4', 'H5', 'HR'].includes(child.tagName) && currentSectionGroup.length > 0) {
                             const sectionWrapper = document.createElement('div');
                             sectionWrapper.className = 'fade-in-section';
-                            sectionWrapper.style.marginBottom = '2rem';
-                            sectionWrapper.style.padding = '0 1.5rem';
+                            sectionWrapper.style.marginBottom = '2rem'; // Spacing between animated sections
+                            sectionWrapper.style.padding = '0 1.5rem'; // Padding for content within the section
                             sectionWrapper.style.maxWidth = '100%';
                             
-                            currentSectionElements.forEach(elHtml => sectionWrapper.innerHTML += elHtml);
+                            currentSectionGroup.forEach(elHtml => sectionWrapper.innerHTML += elHtml);
                             proseContentContainer.appendChild(sectionWrapper);
                             
                             setTimeout(() => {
@@ -375,25 +417,29 @@ document.addEventListener('DOMContentLoaded', () => {
                             }, currentAnimationDelay);
                             currentAnimationDelay += sectionDelay;
 
-                            currentSectionElements = [];
+                            currentSectionGroup = [];
                         }
-                        currentSectionElements.push(child.outerHTML);
+                        currentSectionGroup.push(child.outerHTML);
                     });
 
                     // Append the very last section after the loop finishes
-                    if (currentSectionElements.length > 0) {
+                    if (currentSectionGroup.length > 0) {
                         const sectionWrapper = document.createElement('div');
                         sectionWrapper.className = 'fade-in-section';
                         sectionWrapper.style.marginBottom = '2rem';
                         sectionWrapper.style.padding = '0 1.5rem';
                         sectionWrapper.style.maxWidth = '100%';
-                        currentSectionElements.forEach(elHtml => sectionWrapper.innerHTML += elHtml);
+                        currentSectionGroup.forEach(elHtml => sectionWrapper.innerHTML += elHtml);
                         proseContentContainer.appendChild(sectionWrapper);
                         setTimeout(() => {
                             sectionWrapper.classList.add('is-visible');
                         }, currentAnimationDelay);
                     }
                     
+                    // Only append mainAnalysisProseWrapper here AFTER all its content is processed
+                    resultContainer.appendChild(mainAnalysisProseWrapper);
+
+
                     // Show results and back button after animations are scheduled
                     resultContainer.classList.remove('hidden');
                     backToMenuBtn.classList.remove('hidden');
