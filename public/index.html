@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowReader AI Beauty Assistant</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+
+    <div id="welcome-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="text-3xl font-bold text-pink-600 mb-4">Hey, I'm Aura! ✨</h2>
+            <p class="text-gray-700 mb-6 text-lg">Sooo stoked you're here! I'm your new AI beauty BFF, ready to help you find the perfect look.</p>
+            <p class="text-gray-700 mb-8 text-lg">Just upload a clear photo, tell me a little about what you're looking for, and I'll give you some personalized ideas!</p>
+            <button id="close-modal-btn" class="btn btn-primary text-white bg-pink-500 hover:bg-pink-600 border-none px-8 py-3 rounded-full text-lg font-semibold shadow-md">Let's Glow!</button>
+        </div>
+    </div>
+    
+    <div class="main-content min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 py-12">
+        <div class="container mx-auto p-6 bg-white rounded-2xl shadow-xl max-w-4xl">
+            <header class="text-center mb-10">
+                <h1 class="text-5xl font-extrabold text-gray-800 mb-3">Meet Aura <span class="text-pink-500">✨</span></h1>
+                <p class="text-lg text-gray-600">Your AI beauty BFF for personalized skin & makeup advice.</p>
+            </header>
+
+            <form id="analysis-form" class="space-y-6">
+                <div class="form-group">
+                    <label for="mode-select" class="block text-gray-700 text-sm font-bold mb-2">Select Analysis Mode:</label>
+                    <select id="mode-select" name="mode" required class="select select-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                        <option value="skin-analyzer">Skin Analyzer</option>
+                        <option value="makeup-artist">Makeup Artist</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="photo-upload" class="block text-gray-700 text-sm font-bold mb-2">Upload a clear, well-lit photo of your face:</label>
+                    <input type="file" id="photo-upload" name="photo" accept="image/*" required class="file-input file-input-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                </div>
+
+                <div id="skin-analyzer-fields" class="mode-fields space-y-4">
+                    <div class="form-group">
+                        <label for="skin-type" class="block text-gray-700 text-sm font-bold mb-2">Skin Type:</label>
+                        <select id="skin-type" name="skinType" class="select select-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                            <option>Normal</option>
+                            <option>Oily</option>
+                            <option>Dry</option>
+                            <option>Combination</option>
+                            <option>Sensitive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="skin-problem" class="block text-gray-700 text-sm font-bold mb-2">Main Concern:</label>
+                        <select id="skin-problem" name="skinProblem" class="select select-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                            <option>Acne</option>
+                            <option>Dark Spots</option>
+                            <option>Wrinkles & Fine Lines</option>
+                            <option>Redness</option>
+                            <option>Dullness</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="age-group" class="block text-gray-700 text-sm font-bold mb-2">Age Group:</label>
+                        <select id="age-group" name="ageGroup" class="select select-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                            <option>13-19</option>
+                            <option>20-29</option>
+                            <option>30-39</option>
+                            <option>40-49</option>
+                            <option>50+</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="lifestyle" class="block text-gray-700 text-sm font-bold mb-2">Lifestyle:</label>
+                        <select id="lifestyle" name="lifestyleFactor" class="select select-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                            <option>Low Sun Exposure</option>
+                            <option>High Sun Exposure</option>
+                            <option>High Stress</option>
+                            <option>Active</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="makeup-artist-fields" class="mode-fields space-y-4" style="display: none;">
+                    <div class="form-group">
+                        <label for="event-type" class="block text-gray-700 text-sm font-bold mb-2">Event Type:</label>
+                        <input id="event-type" type="text" name="eventType" placeholder="e.g., Wedding, Date Night" class="input input-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                    </div>
+                    <div class="form-group">
+                        <label for="dress-type" class="block text-gray-700 text-sm font-bold mb-2">Outfit Type:</label>
+                        <input id="dress-type" type="text" name="dressType" placeholder="e.g., Silk Dress, Casual" class="input input-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                    </div>
+                    <div class="form-group">
+                        <label for="dress-color" class="block text-gray-700 text-sm font-bold mb-2">Outfit Color:</label>
+                        <input id="dress-color" type="text" name="dressColor" placeholder="e.g., Red, Navy Blue" class="input input-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                    </div>
+                    <div class="form-group">
+                        <label for="style-pref" class="block text-gray-700 text-sm font-bold mb-2">Style Preference:</label>
+                        <select id="style-pref" name="userStylePreference" class="select select-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                            <option value="Natural">Natural</option>
+                            <option value="Glamorous">Glamorous</option>
+                            <option value="Bold & Dramatic">Bold & Dramatic</option>
+                            <option value="Minimalist">Minimalist</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn w-full btn btn-lg btn-secondary text-white bg-purple-500 hover:bg-purple-600 border-none px-8 py-3 rounded-full text-xl font-bold shadow-md transform transition-transform duration-200 hover:scale-105">Ask Aura</button>
+            </form>
+
+            <div id="loader" class="hidden text-center mt-8 p-4 bg-purple-50 rounded-lg shadow-inner">
+                <span class="loading loading-spinner loading-lg text-purple-500"></span>
+                <p class="text-purple-700 text-lg font-semibold mt-2">Analyzing... Please wait, Aura is crafting your magic! ✨</p>
+            </div>
+
+            <div id="result-container" class="result-section mt-10">
+                </div>
+        </div>
+
+        <div id="history-panel" class="container mx-auto p-6 bg-white rounded-2xl shadow-xl max-w-4xl mt-8" style="display: none;">
+            <div class="history-header flex justify-between items-center mb-4">
+                <h2 class="text-3xl font-bold text-gray-800">Recent Analyses</h2>
+                <button id="clear-history-btn" class="btn btn-outline btn-error">Clear History</button>
+            </div>
+            <ul id="history-list" class="space-y-2">
+                </ul>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+/* public/css/style.css */
+
+/* Basic styling for the modal overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+    display: none; /* Hidden by default, shown by JavaScript */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    z-index: 1000; /* Ensure it's on top of other content */
+}
+
+.modal-content {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    text-align: center;
+    animation: fadeIn 0.3s ease-out; /* Simple fade-in animation */
+}
+
+/* Simple fade-in animation for the modal */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Utility classes for hiding elements (used by JavaScript) */
+.hidden {
+    display: none !important;
+}
+
+/* General body styling for fonts and background */
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Basic form group spacing if not covered by Tailwind/DaisyUI */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+/* Ensure Markdown rendered content has proper spacing within the prose class */
+.prose h1, .prose h2, .prose h3, .prose h4, .prose p, .prose ul, .prose ol, .prose li {
+    margin-bottom: 1em; /* Add some spacing for readability */
+}
+.prose ul, .prose ol {
+    padding-left: 1.5em; /* Indent lists */
+}
