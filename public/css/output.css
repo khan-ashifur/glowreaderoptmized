@@ -31,7 +31,46 @@
   /* Simple fade-in animation */
 }
 
-/* Simple fade-in animation for the modal */
+/* Loader Overlay Styling */
+
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.95);
+  /* Semi-transparent white background */
+  display: flex;
+  /* Use flex to center content */
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  /* Below welcome modal, above main content */
+  flex-direction: column;
+  /* Stack spinner and text vertically */
+  text-align: center;
+  padding: 20px;
+  /* Add some padding */
+}
+
+.loader-content {
+  background-color: #fcf7f9;
+  /* Light pink background */
+  border-radius: 15px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 90%;
+  /* Responsive width */
+  min-width: 280px;
+  text-align: center;
+}
+
+/* Simple fade-in animation for elements */
 
 @keyframes fadeIn {
   from {
@@ -49,6 +88,7 @@
 
 .hidden {
   display: none !important;
+  /* IMPORTANT: Ensures display: none is always applied when .hidden is present */
 }
 
 /* General body styling for fonts and background */
@@ -67,8 +107,6 @@ body {
 
 /* Base styling for the container that holds the markdown output */
 
-/* Removed .prose from here as it's now on an inner div */
-
 .result-card {
   padding: 0;
   /* Adjust padding if necessary for overall card */
@@ -83,7 +121,6 @@ body {
 /* Styling for the markdown content itself, inside the result-card */
 
 .result-card .prose {
-  /* IMPORTANT CHANGE: space between .result-card and .prose */
   padding: 1.5rem;
   /* Add padding inside the prose content */
 }
@@ -102,7 +139,6 @@ body {
 /* Style for the personalized greeting H3 */
 
 .result-card .prose h3:first-of-type {
-  /* This targets the greeting after the H1 */
   text-align: center;
   color: #4A5568;
   /* A sophisticated gray */
@@ -226,7 +262,6 @@ body {
 /* Disclaimer text styling - ensure your prompt gives this a class like <p class="disclaimer-text"> */
 
 .result-card .prose .disclaimer-text {
-  /* Updated to work with inner prose */
   font-size: 0.8em;
   color: #9CA3AF;
   /* Lighter gray */

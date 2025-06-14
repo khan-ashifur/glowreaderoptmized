@@ -20,13 +20,22 @@
         </div>
     </div>
     
+    <div id="loader-overlay" class="loader-overlay hidden">
+        <div class="loader-content">
+            <span class="loading loading-spinner loading-lg text-purple-500"></span>
+            <p id="loader-message-text" class="text-purple-700 text-lg font-semibold mt-2">Analyzing... Please wait, Aura is crafting your magic! ✨</p>
+        </div>
+    </div>
+
     <div class="main-content min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 py-12">
         <div class="container mx-auto bg-white rounded-2xl shadow-xl max-w-4xl">
-            <header class="text-center mb-10 p-6"> <h1 class="text-5xl font-extrabold text-gray-800 mb-3">Meet Aura <span class="text-pink-500">✨</span></h1>
+            <header class="text-center mb-10 p-6">
+                <h1 class="text-5xl font-extrabold text-gray-800 mb-3">Meet Aura <span class="text-pink-500">✨</span></h1>
                 <p class="text-lg text-gray-600">Your AI beauty BFF for personalized skin & makeup advice.</p>
             </header>
 
-            <form id="analysis-form" class="space-y-6 p-6"> <div class="form-group">
+            <form id="analysis-form" class="space-y-6 p-6">
+                <div class="form-group">
                     <label for="mode-select" class="block text-gray-700 text-sm font-bold mb-2">Select Analysis Mode:</label>
                     <select id="mode-select" name="mode" required class="select select-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                         <option value="skin-analyzer">Skin Analyzer</option>
@@ -107,11 +116,6 @@
 
                 <button type="submit" class="submit-btn w-full btn btn-lg btn-secondary text-white bg-purple-500 hover:bg-purple-600 border-none px-8 py-3 rounded-full text-xl font-bold shadow-md transform transition-transform duration-200 hover:scale-105">Ask Aura</button>
             </form>
-
-            <div id="loader" class="hidden text-center mt-8 p-4 bg-purple-50 rounded-lg shadow-inner">
-                <span class="loading loading-spinner loading-lg text-purple-500"></span>
-                <p class="text-purple-700 text-lg font-semibold mt-2">Analyzing... Please wait, Aura is crafting your magic! ✨</p>
-            </div>
 
             <div id="result-container" class="result-section mt-10">
                 </div>
