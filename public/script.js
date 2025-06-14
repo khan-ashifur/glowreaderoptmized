@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const loaderMessageText = document.getElementById('loader-message-text');
     const resultContainer = document.getElementById('result-container');
     const backToMenuBtn = document.getElementById('back-to-menu-btn');
+    const uploadedImageDisplay = document.getElementById('uploaded-image-display'); // New: Reference to image display div
+
 
     const historyPanel = document.getElementById('history-panel');
     const historyList = document.getElementById('history-list');
@@ -45,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function saveAnalysis(mode, inputs, analysisSummary, fullAnalysisHtml) {
+    function saveAnalysis(mode, inputs, analysisSummary, fullAnalysisHtml, imageDataUrl) { // Added imageDataUrl
         const history = getHistory();
         const newEntry = {
             id: Date.now(), // Unique ID for the entry
@@ -53,7 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
             mode: mode,
             inputs: inputs, // Store a copy of the form inputs
             analysisSummary: analysisSummary, // A brief summary text
-            fullAnalysisHtml: fullAnalysisHtml // Full HTML of the analysis for re-display
+            fullAnalysisHtml: fullAnalysisHtml, // Full HTML of the analysis for re-display
+            imageDataUrl: imageDataUrl // Save the image data URL
         };
         history.unshift(newEntry); // Add to the beginning (most recent first)
         // Limit history to, say, 10 items
@@ -76,12 +79,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = new Date(item.timestamp).toLocaleString();
         const modeText = item.mode === 'skin-analyzer' ? 'Skin Analysis' : 'Makeup Tutorial';
 
+        let imagePreview = '';
+        if (item.imageDataUrl) {
+            imagePreview = `<img src="${item.imageDataUrl}" alt="Analysis Preview" class="history-item-img-preview" />`;
+        }
+
         li.innerHTML = `
             <div class="history-item-header">
                 <span class="history-item-mode">${modeText}</span>
                 <span class="history-item-date">${date}</span>
             </div>
-            <p class="history-item-summary">${item.analysisSummary}</p>
+            <div class="flex items-center mt-2">
+                ${imagePreview}
+                <p class="history-item-summary ${imagePreview ? 'ml-3' : ''}">${item.analysisSummary}</p>
+            </div>
         `;
 
         li.addEventListener('click', () => {
@@ -108,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function displayHistoricalAnalysis(item) {
         // Hide current UI
-        analysisForm.classList.add('hidden'); // Use class for consistency
+        analysisForm.classList.add('hidden');
         historyPanel.classList.add('hidden'); // Hide history panel
         loaderOverlay.classList.add('hidden'); // Ensure loader is hidden
         
@@ -116,8 +127,19 @@ document.addEventListener('DOMContentLoaded', () => {
         resultContainer.innerHTML = ''; // Clear current results
         resultContainer.classList.remove('hidden'); // Show result container
 
+        // Display historical image
+        uploadedImageDisplay.innerHTML = '';
+        if (item.imageDataUrl) {
+            const img = document.createElement('img');
+            img.src = item.imageDataUrl;
+            img.alt = 'Uploaded profile picture for analysis';
+            img.classList.add('uploaded-analysis-image');
+            uploadedImageDisplay.appendChild(img);
+            resultContainer.appendChild(uploadedImageDisplay); // Append image container
+        }
+
         const mainAnalysisProseWrapper = document.createElement('div');
-        mainAnalysisProseWrapper.className = 'result-card p-6 bg-white shadow-lg rounded-xl';
+        mainAnalysisProseWrapper.className = 'result-card mb-6 p-6 bg-white shadow-lg rounded-xl';
         
         const proseContentContainer = document.createElement('div');
         proseContentContainer.className = 'prose max-w-full';
@@ -230,11 +252,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Event Listeners for History UI ---
     if (toggleHistoryBtn) {
         toggleHistoryBtn.addEventListener('click', toggleHistoryPanel);
-        console.log('DEBUG: History toggle button listener attached.');
     }
     if (clearHistoryBtn) {
         clearHistoryBtn.addEventListener('click', clearHistory);
-        console.log('DEBUG: Clear history button listener attached.');
     }
 
     // --- Standard UI Interaction (Mode Change) ---
@@ -253,12 +273,30 @@ document.addEventListener('DOMContentLoaded', () => {
             analysisForm.classList.add('hidden'); // Use class for consistency
             resultContainer.classList.add('hidden');
             resultContainer.innerHTML = ''; // Clear previous results
+            uploadedImageDisplay.innerHTML = ''; // Clear previous image
             backToMenuBtn.classList.add('hidden');
             historyPanel.classList.add('hidden'); // Ensure history panel is hidden
             loaderOverlay.classList.remove('hidden');
 
             const formData = new FormData(analysisForm);
             const selectedMode = formData.get('mode');
+
+            // Get uploaded image data for display and history saving
+            let imageDataUrl = '';
+            const photoFile = formData.get('photo');
+            if (photoFile) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    imageDataUrl = reader.result;
+                    const img = document.createElement('img');
+                    img.src = imageDataUrl;
+                    img.alt = 'Uploaded profile picture for analysis';
+                    img.classList.add('uploaded-analysis-image');
+                    uploadedImageDisplay.appendChild(img);
+                    resultContainer.prepend(uploadedImageDisplay); // Prepend image container
+                };
+                reader.readAsDataURL(photoFile);
+            }
 
             startLoaderMessages(selectedMode, formData);
 
@@ -295,13 +333,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 const fullAnalysisHtmlContent = marked.parse(analysisText || '');
 
-                // Save to history before displaying
-                saveAnalysis(selectedMode, inputsForHistory, analysisSummary, fullAnalysisHtmlContent);
+                // Save to history before displaying (imageDataUrl will be available due to reader.onloadend)
+                // Use a slight delay or ensure imageDataUrl is ready if this causes issues
+                // For now, assuming it's quick enough or img is already prepended
+                saveAnalysis(selectedMode, inputsForHistory, analysisSummary, fullAnalysisHtmlContent, imageDataUrl);
 
 
                 // --- Display Analysis Content with Animation ---
                 const mainAnalysisProseWrapper = document.createElement('div');
-                mainAnalysisProseWrapper.className = 'result-card mb-6 p-6 bg-white shadow-lg rounded-xl';
+                mainAnalysisProseWrapper.className = 'result-card p-6 bg-white shadow-lg rounded-xl';
                 resultContainer.appendChild(mainAnalysisProseWrapper); 
 
                 const proseContentContainer = document.createElement('div');

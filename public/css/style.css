@@ -222,4 +222,168 @@ body {
 
 /* General list indentation */
 .result-card .prose ul, .result-card .prose ol {
-    margin-left: 0; /* Reset default list indent
+    margin-left: 0; /* Reset default list indent if using custom padding */
+    padding-left: 0;
+}
+
+/* History Panel specific styles */
+.history-panel {
+    /* Base styles for the panel */
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-top: 2rem;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+}
+
+.history-list {
+    list-style: none; /* Remove default list bullets */
+    padding: 0;
+}
+
+.history-list li {
+    background-color: #fcf7f9; /* Light background for each item */
+    border: 1px solid #fbdceb; /* Subtle border */
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.history-list li:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.history-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.history-item-mode {
+    font-weight: 600;
+    color: #8B5CF6; /* Purple tone */
+}
+
+.history-item-date {
+    font-size: 0.85em;
+    color: #6B7280; /* Gray tone */
+}
+
+.history-item-summary {
+    font-size: 0.95em;
+    color: #4A5568; /* Darker gray */
+    line-height: 1.4;
+}
+
+/* --- New styles for Uploaded Image and Enhanced Skin Concerns --- */
+#uploaded-image-display img.uploaded-analysis-image {
+    max-width: 150px; /* Smaller, more elegant */
+    height: 150px; /* Ensure it's square */
+    object-fit: cover; /* Crop to fit */
+    border-radius: 50%; /* Make it perfectly round */
+    border: 4px solid #FBCFE8; /* Light pink border */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+    margin: 0 auto 2rem auto; /* Center and add margin below */
+    display: block; /* Ensure margin auto works */
+}
+
+.skin-concerns-card {
+    background-color: #FFF7FE; /* Very light pink background */
+    border-radius: 15px;
+    padding: 2rem; /* More generous padding */
+    margin-top: 2rem; /* Space from image */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Stronger shadow */
+}
+
+.skin-concerns-title {
+    color: #E11D74; /* Brighter pink for the title */
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 1.8rem; /* More space below title */
+    text-align: center;
+    position: relative; /* For pseudo-element icon */
+}
+.skin-concerns-title::before {
+    content: '✨'; /* Sparkle icon */
+    position: absolute;
+    left: -25px; /* Adjust position */
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+}
+.skin-concerns-title::after {
+    content: '✨'; /* Sparkle icon */
+    position: absolute;
+    right: -25px; /* Adjust position */
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+}
+
+
+.concerns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
+    gap: 1.5rem; /* Gap between grid items */
+}
+
+.concern-item {
+    background-color: #FFFFFF; /* White background for each item */
+    border: 1px solid #FBCFE8; /* Light pink border */
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column; /* Stack label, bar, percentage */
+    align-items: flex-start; /* Align content to start */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+}
+
+.concern-label {
+    font-weight: 600;
+    color: #4A5568; /* Darker text */
+    font-size: 0.95rem; /* Slightly smaller for labels */
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem; /* Space between icon and text */
+}
+
+.concern-label .emoji-icon { /* Style for icons within label */
+    font-size: 1.2em;
+}
+
+.progress-bar-container {
+    width: 100%; /* Full width within its item */
+    background-color: #E9D5FF; /* Light purple background */
+    border-radius: 8px; /* More rounded */
+    height: 12px; /* Thicker bar */
+    overflow: hidden;
+    margin-bottom: 0.6rem;
+}
+
+.progress-bar {
+    background: linear-gradient(to right, #A78BFA, #D8B4FE); /* Purple gradient */
+    height: 100%;
+    border-radius: 8px; /* Match container border-radius */
+    transition: width 0.8s ease-out; /* Smooth animation for progress */
+}
+
+.concern-percentage {
+    color: #9D174D; /* Deeper pink for percentage */
+    font-weight: bold;
+    font-size: 0.9rem;
+    align-self: flex-end; /* Align percentage to the right */
+}
