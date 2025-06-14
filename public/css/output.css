@@ -70,7 +70,7 @@
   text-align: center;
 }
 
-/* Simple fade-in animation for elements */
+/* Base fade-in animation for overall elements */
 
 @keyframes fadeIn {
   from {
@@ -82,6 +82,21 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* New: Fade-in animation for individual sections */
+
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(20px);
+  /* Start slightly below */
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  /* Smooth transition */
+}
+
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Utility classes for hiding elements (used by JavaScript) */
@@ -103,7 +118,7 @@ body {
   margin-bottom: 1rem;
 }
 
-/* --- AI Output Section Styling (UPDATED FOR INNER PROSE DIV) --- */
+/* --- AI Output Section Styling --- */
 
 /* Base styling for the container that holds the markdown output */
 
@@ -121,8 +136,9 @@ body {
 /* Styling for the markdown content itself, inside the result-card */
 
 .result-card .prose {
-  padding: 1.5rem;
-  /* Add padding inside the prose content */
+  /* Padding will be applied to individual sections now, not the whole prose block */
+  padding: 0;
+  /* Resetting padding here, will be on individual sections */
 }
 
 /* Style for the main intro section's H1 */
@@ -133,7 +149,6 @@ body {
   /* A vibrant pink */
   margin-bottom: 0.5rem;
   padding-top: 0;
-  /* Already inside the card's padding */
 }
 
 /* Style for the personalized greeting H3 */

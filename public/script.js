@@ -20,10 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const modeSelect = document.getElementById('mode-select');
     const skinFields = document.getElementById('skin-analyzer-fields');
     const makeupFields = document.getElementById('makeup-artist-fields');
-    const analysisForm = document.getElementById('analysis-form'); // Reference to the form itself
-    const loaderOverlay = document.getElementById('loader-overlay'); // Reference to the new loader overlay
+    const analysisForm = document.getElementById('analysis-form');
+    const loaderOverlay = document.getElementById('loader-overlay');
     const loaderMessageText = document.getElementById('loader-message-text');
     const resultContainer = document.getElementById('result-container');
+    const backToMenuBtn = document.getElementById('back-to-menu-btn');
 
     let loaderInterval; // To store the interval ID for clearing
 
@@ -74,10 +75,10 @@ document.addEventListener('DOMContentLoaded', () => {
             messages = [`Analyzing... Please wait, Aura is crafting your magic! ✨`];
         }
 
-        loaderMessageText.textContent = messages[currentMessageIndex] + ' '; // Set initial message
+        loaderMessageText.textContent = messages[currentMessageIndex] + ' ';
 
         if (loaderInterval) {
-            clearInterval(loaderInterval); // Clear any existing interval
+            clearInterval(loaderInterval);
         }
 
         loaderInterval = setInterval(() => {
@@ -94,7 +95,19 @@ document.addEventListener('DOMContentLoaded', () => {
         loaderMessageText.textContent = 'Analyzing... Please wait, Aura is crafting your magic! ✨'; // Reset to default
     }
 
-    // --- Part 3: Form Submission Logic ---
+    // --- Back to Main Menu Button Functionality ---
+    if (backToMenuBtn) {
+        backToMenuBtn.addEventListener('click', () => {
+            resultContainer.classList.add('hidden'); // Hide the analysis results
+            resultContainer.innerHTML = ''; // Clear results content
+            backToMenuBtn.classList.add('hidden'); // Hide the back button itself
+            analysisForm.classList.remove('hidden'); // Show the form again
+            analysisForm.reset(); // Optionally reset all form fields
+            handleModeChange(); // Ensure correct fields are visible for the default mode
+        });
+    }
+
+    // --- Part 3: Form Submission Logic with Section-by-Section Animation ---
     if (analysisForm) {
         analysisForm.addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -103,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             analysisForm.classList.add('hidden');
             resultContainer.innerHTML = ''; // Clear previous results
             resultContainer.classList.add('hidden'); // Hide results until ready
+            backToMenuBtn.classList.add('hidden'); // Ensure back button is hidden initially
             loaderOverlay.classList.remove('hidden'); // Show the full-screen loader
 
             const formData = new FormData(analysisForm);
@@ -123,57 +137,101 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const result = await response.json();
 
+                stopLoaderMessages(); // Stop loader messages once response is received
+                loaderOverlay.classList.add('hidden'); // Hide the full-screen loader
+
                 console.log("--- DEBUGGING Frontend Output ---");
                 console.log("1. Received full response object from server:", result);
 
                 const analysisText = result.analysisText;
                 const skinConcerns = result.skinConcerns;
 
-                let outputHtml = '';
+                // --- Build HTML and Animate Sections ---
 
-                // Handle skin concerns (if any) - this part appears instantly
+                // 1. Handle skin concerns (if any) - this part appears instantly
                 if (skinConcerns && Object.keys(skinConcerns).length > 0) {
-                    console.log("5. Generating HTML for skin concerns progress bars.");
-                    outputHtml += `
-                        <div class="result-card mb-6 p-6 bg-white shadow-lg rounded-xl">
-                            <h2 class="text-2xl font-bold text-pink-600 mb-4">Your Skin Concerns at a Glance!</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    `;
+                    console.log("Generating HTML for skin concerns progress bars.");
+                    const skinConcernsCard = document.createElement('div');
+                    skinConcernsCard.className = 'result-card mb-6 p-6 bg-white shadow-lg rounded-xl fade-in-section';
+                    let concernsHtml = `<h2 class="text-2xl font-bold text-pink-600 mb-4">Your Skin Concerns at a Glance!</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
                     for (const concernName in skinConcerns) {
                         if (Object.hasOwnProperty.call(skinConcerns, concernName)) {
                             const percentage = skinConcerns[concernName];
-                            outputHtml += `
-                                <div class="form-control mb-2">
-                                    <label class="label">
-                                        <span class="label-text text-gray-700 font-medium">${concernName}</span>
-                                        <span class="label-text-alt text-pink-500 font-semibold">${percentage}%</span>
-                                    </label>
-                                    <progress class="progress progress-primary w-full" value="${percentage}" max="100"></progress>
-                                </div>
-                            `;
+                            concernsHtml += `<div class="form-control mb-2"><label class="label"><span class="label-text text-gray-700 font-medium">${concernName}</span><span class="label-text-alt text-pink-500 font-semibold">${percentage}%</span></label><progress class="progress progress-primary w-full" value="${percentage}" max="100"></progress></div>`;
                         }
                     }
-                    outputHtml += `
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    console.log("5. No skin concerns data found or not in skin-analyzer mode.");
+                    concernsHtml += `</div>`;
+                    skinConcernsCard.innerHTML = concernsHtml;
+                    resultContainer.appendChild(skinConcernsCard);
+                    setTimeout(() => skinConcernsCard.classList.add('is-visible'), 50); // Small initial delay
                 }
 
-                // Append the main analysis markdown, parsed into HTML instantly
-                outputHtml += `
-                    <div class="result-card p-6 bg-white shadow-lg rounded-xl">
-                        <div class="prose max-w-full">
-                            ${marked.parse(analysisText)}
-                        </div>
-                    </div>
-                `;
+                // 2. Process and animate main analysis text section by section
+                const mainAnalysisProseWrapper = document.createElement('div');
+                mainAnalysisProseWrapper.className = 'result-card p-6 bg-white shadow-lg rounded-xl'; // Apply outer card styling here
 
-                resultContainer.innerHTML = outputHtml; // Inject generated HTML
-                resultContainer.classList.remove('hidden'); // Show results
-                console.log("6. Analysis output displayed instantly.");
+                // Create a temporary div to parse markdown and then extract its children
+                const tempProcessorDiv = document.createElement('div');
+                tempProcessorDiv.innerHTML = marked.parse(analysisText || ''); // Parse all markdown to HTML here
 
+                const proseContentContainer = document.createElement('div'); // This will hold the animated sections
+                proseContentContainer.className = 'prose max-w-full'; // Apply prose styles to this container
+                mainAnalysisProseWrapper.appendChild(proseContentContainer); // Append to main card wrapper
+
+                let currentSectionElements = [];
+                const sectionDelay = 200; // Milliseconds between each section appearing
+                let currentAnimationDelay = 0; // Cumulative delay
+
+                // Loop through the children of the parsed markdown
+                Array.from(tempProcessorDiv.children).forEach(child => {
+                    // Check if we need to start a NEW animated section.
+                    // A new section starts if:
+                    // 1. It's a major heading (H1, H3, H4, H5) or an HR
+                    // AND
+                    // 2. We've already collected some content for the *current* section (to avoid empty wrappers)
+                    // OR
+                    // 3. It's the very first element (currentSectionElements is empty) and it's not a direct heading of a new block.
+                    // This logic is simplified: just group until a new heading/HR is hit.
+
+                    if (['H1', 'H3', 'H4', 'H5', 'HR'].includes(child.tagName) && currentSectionElements.length > 0) {
+                        // If we have collected elements for the previous section, create a wrapper for it
+                        const sectionWrapper = document.createElement('div');
+                        sectionWrapper.className = 'fade-in-section'; // Add animation class
+                        sectionWrapper.style.marginBottom = '2rem'; // Spacing between animated sections
+                        sectionWrapper.style.padding = '0 1.5rem'; // Add padding inside this animated section
+                        sectionWrapper.style.maxWidth = '100%'; // Ensure it fills container
+                        
+                        currentSectionElements.forEach(elHtml => sectionWrapper.innerHTML += elHtml); // Add collected HTML to wrapper
+                        proseContentContainer.appendChild(sectionWrapper); // Append to the main prose container
+                        
+                        setTimeout(() => {
+                            sectionWrapper.classList.add('is-visible');
+                        }, currentAnimationDelay);
+                        currentAnimationDelay += sectionDelay; // Increment delay for next section
+
+                        currentSectionElements = []; // Reset for the new section
+                    }
+                    currentSectionElements.push(child.outerHTML); // Collect current element's HTML (as string)
+                });
+
+                // After the loop, append any remaining elements as the last section
+                if (currentSectionElements.length > 0) {
+                    const sectionWrapper = document.createElement('div');
+                    sectionWrapper.className = 'fade-in-section';
+                    sectionWrapper.style.marginBottom = '2rem';
+                    sectionWrapper.style.padding = '0 1.5rem';
+                    sectionWrapper.style.maxWidth = '100%';
+                    currentSectionElements.forEach(elHtml => sectionWrapper.innerHTML += elHtml);
+                    proseContentContainer.appendChild(sectionWrapper);
+                    setTimeout(() => {
+                        sectionWrapper.classList.add('is-visible');
+                    }, currentAnimationDelay);
+                }
+
+                resultContainer.appendChild(mainAnalysisProseWrapper); // Append the main analysis card after all sections are processed
+
+                resultContainer.classList.remove('hidden'); // Show results container
+                backToMenuBtn.classList.remove('hidden'); // Show the back button
 
             } catch (error) {
                 console.error('ERROR during analysis:', error);
@@ -182,9 +240,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     resultContainer.classList.remove('hidden'); // Show error message
                 }
             } finally {
-                loaderOverlay.classList.add('hidden'); // Hide the full-screen loader
-                stopLoaderMessages(); // Stop personalized loader messages
-                console.log("--- DEBUGGING END ---");
+                // Ensure form is visible if error or for retrying, hide loader
+                analysisForm.classList.remove('hidden');
+                loaderOverlay.classList.add('hidden');
+                stopLoaderMessages();
             }
         });
     }
