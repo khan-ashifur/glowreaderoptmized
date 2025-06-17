@@ -1,6 +1,6 @@
 /* public/css/style.css */
 
-/* Welcome Modal Styling (Enhanced) */
+/* Welcome Modal Styling (Enhanced & Premium) */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -58,22 +58,22 @@
     opacity: 0; /* Start hidden */
 }
 
-/* Individual star sizes and positions */
-.star-1 { width: 4px; height: 4px; top: 10%; left: 5%; animation-delay: 0.5s; }
-.star-2 { width: 6px; height: 6px; top: 20%; left: 80%; animation-delay: 1.2s; }
-.star-3 { width: 3px; height: 3px; top: 30%; left: 20%; animation-delay: 0.1s; }
-.star-4 { width: 5px; height: 5px; top: 40%; left: 90%; animation-delay: 2s; }
-.star-5 { width: 7px; height: 7px; top: 50%; left: 10%; animation-delay: 0.8s; }
-.star-6 { width: 4px; height: 4px; top: 60%; left: 70%; animation-delay: 1.5s; }
-.star-7 { width: 6px; height: 6px; top: 70%; left: 25%; animation-delay: 0.3s; }
-.star-8 { width: 3px; height: 3px; top: 80%; left: 60%; animation-delay: 1s; }
-.star-9 { width: 5px; height: 5px; top: 90%; left: 5%; animation-delay: 2.2s; }
-.star-10 { width: 7px; height: 7px; top: 15%; left: 40%; animation-delay: 0.6s; }
-.star-11 { width: 4px; height: 4px; top: 5%; left: 95%; animation-delay: 1.8s; }
-.star-12 { width: 6px; height: 6px; top: 25%; left: 50%; animation-delay: 0.9s; }
-.star-13 { width: 3px; height: 3px; top: 75%; left: 15%; animation-delay: 0.7s; }
-.star-14 { width: 5px; height: 5px; top: 85%; left: 75%; animation-delay: 1.3s; }
-.star-15 { width: 4px; height: 4px; top: 45%; left: 30%; animation-delay: 0.4s; }
+/* Individual star sizes and positions (randomized for natural feel) */
+.star-1 { width: 4px; height: 4px; top: 10%; left: 5%; animation-delay: 0.5s; animation-duration: 12s; }
+.star-2 { width: 6px; height: 6px; top: 20%; left: 80%; animation-delay: 1.2s; animation-duration: 9s; }
+.star-3 { width: 3px; height: 3px; top: 30%; left: 20%; animation-delay: 0.1s; animation-duration: 15s; }
+.star-4 { width: 5px; height: 5px; top: 40%; left: 90%; animation-delay: 2s; animation-duration: 11s; }
+.star-5 { width: 7px; height: 7px; top: 50%; left: 10%; animation-delay: 0.8s; animation-duration: 13s; }
+.star-6 { width: 4px; height: 4px; top: 60%; left: 70%; animation-delay: 1.5s; animation-duration: 10s; }
+.star-7 { width: 6px; height: 6px; top: 70%; left: 25%; animation-delay: 0.3s; animation-duration: 14s; }
+.star-8 { width: 3px; height: 3px; top: 80%; left: 60%; animation-delay: 1s; animation-duration: 9.5s; }
+.star-9 { width: 5px; height: 5px; top: 90%; left: 5%; animation-delay: 2.2s; animation-duration: 12.5s; }
+.star-10 { width: 7px; height: 7px; top: 15%; left: 40%; animation-delay: 0.6s; animation-duration: 10.5s; }
+.star-11 { width: 4px; height: 4px; top: 5%; left: 95%; animation-delay: 1.8s; animation-duration: 13.5s; }
+.star-12 { width: 6px; height: 6px; top: 25%; left: 50%; animation-delay: 0.9s; animation-duration: 11.5s; }
+.star-13 { width: 3px; height: 3px; top: 75%; left: 15%; animation-delay: 0.7s; animation-duration: 14.5s; }
+.star-14 { width: 5px; height: 5px; top: 85%; left: 75%; animation-delay: 1.3s; animation-duration: 10.8s; }
+.star-15 { width: 4px; height: 4px; top: 45%; left: 30%; animation-delay: 0.4s; animation-duration: 13.2s; }
 
 
 /* Keyframe Animations */
@@ -103,6 +103,30 @@
 @keyframes flicker {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.7; }
+}
+
+/* New: Animated Gradient Glow for Buttons (animate-aura) */
+@keyframes aura-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.4); } /* Pink shadow */
+  50% { box-shadow: 0 0 12px 6px rgba(236, 72, 153, 0.6); }
+}
+.animate-aura {
+  animation: aura-glow 2.8s ease-in-out infinite;
+}
+
+/* New: Subtle Text Shimmer/Flicker for Headings (flicker-text) */
+@keyframes shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; transform: scale(1.01); }
+}
+.flicker-text {
+  animation: shimmer 2.5s ease-in-out infinite;
+}
+
+
+/* Smooth Page Transition (fade-in-app) */
+.fade-in-app {
+    animation: fadeIn 0.8s ease-out both;
 }
 
 
@@ -438,7 +462,7 @@ body {
 .progress-bar {
     background: linear-gradient(to right, #C026D3, #E11D74); /* Vibrant gradient: Purple to Pink */
     height: 100%;
-    border-radius: 8m; /* Match container border-radius */
+    border-radius: 8px; /* Match container border-radius */
     transition: width 0.8s ease-out; /* Smooth animation for progress */
     box-shadow: 0 2px 5px rgba(192, 38, 211, 0.3), 0 1px 2px rgba(225, 29, 116, 0.2); /* Soft shadow for filled part */
 }

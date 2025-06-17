@@ -4,54 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GlowReader AI Beauty Assistant</title>
-    <!-- IMPORTANT: Link to your custom CSS in the 'css' subfolder -->
     <link rel="stylesheet" href="css/style.css">
-    <!-- Link to Google Fonts (Poppins for a modern look) -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Link to DaisyUI (requires Tailwind CSS) -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <!-- Link to Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="fade-in-app"> <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-white overflow-hidden">
+        <div class="absolute inset-0 pointer-events-none z-0">
+            <div class="star star-1"></div>
+            <div class="star star-2"></div>
+            <div class="star star-3"></div>
+            <div class="star star-4"></div>
+            <div class="star star-5"></div>
+            <div class="star star-6"></div>
+            <div class="star star-7"></div>
+            <div class="star star-8"></div>
+            <div class="star star-9"></div>
+            <div class="star star-10"></div>
+            <div class="star star-11"></div>
+            <div class="star star-12"></div>
+            <div class="star star-13"></div>
+            <div class="star star-14"></div>
+            <div class="star star-15"></div>
+        </div>
 
-    <!-- Welcome Modal - This will appear on page load -->
-    <div id="welcome-modal" class="modal-overlay">
-        <!-- Animated Stars/Particles for Premium Feel (These divs will be styled and animated in style.css) -->
-        <div class="star star-1"></div>
-        <div class="star star-2"></div>
-        <div class="star star-3"></div>
-        <div class="star star-4"></div>
-        <div class="star star-5"></div>
-        <div class="star star-6"></div>
-        <div class="star star-7"></div>
-        <div class="star star-8"></div>
-        <div class="star star-9"></div>
-        <div class="star star-10"></div>
-        <div class="star star-11"></div>
-        <div class="star star-12"></div>
-        <div class="star star-13"></div>
-        <div class="star star-14"></div>
-        <div class="star star-15"></div>
+        <div class="relative z-10 max-w-xl w-full text-center px-6 py-10 rounded-3xl bg-white/70 backdrop-blur-md shadow-2xl border border-pink-200 animate-fade-in">
+            <div class="aura-pulse-glow"></div> 
 
-        <div class="modal-content">
-            <!-- Glowing Aura pulse behind content (styled in CSS) -->
-            <div class="aura-pulse-glow"></div>
-
-            <h2 class="text-3xl md:text-4xl font-extrabold text-pink-600 mb-4 relative z-10">Hey, I'm Aura! ✨</h2>
-            <p class="text-gray-800 text-lg leading-relaxed relative z-10 mb-4">
-                Welcome to your personalized AI beauty journey. I’m here to glow you up with confidence 💋
+            <h2 class="text-4xl md:text-5xl font-extrabold text-pink-600 mb-4 relative z-10 flicker-text">✨ Meet Aura</h2> <p class="text-lg md:text-xl text-gray-800 font-medium mb-4 leading-relaxed relative z-10">
+                Your AI beauty BFF is here to help you glow with confidence 💋
             </p>
             <p class="text-base md:text-lg text-gray-600 relative z-10 mb-6">
                 Upload your best selfie and let Aura create personalized skincare tips or glam makeup just for you.
             </p>
-            <button id="close-modal-btn" class="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg hover:scale-105 transition-all duration-300 relative z-10">
-                Let’s Glow 🌈
+            <button id="close-modal-btn"
+                class="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg hover:scale-105 transition-all duration-300 relative z-10 animate-aura"> Let’s Glow 🌈
             </button>
         </div>
     </div>
     
-    <!-- Loader Overlay - This will appear as a full-screen overlay when analyzing -->
     <div id="loader-overlay" class="loader-overlay hidden">
         <div class="loader-content">
             <span class="loading loading-spinner loading-lg text-purple-500"></span>
@@ -59,39 +50,33 @@
         </div>
     </div>
 
-    <!-- Main Content Area -->
     <div class="main-content min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 py-12">
         <div class="container mx-auto bg-white rounded-2xl shadow-xl max-w-4xl">
-            <!-- HEADER: Adjusted for vertical stacking of H1/P and aligned button/label -->
-            <header class="text-center mb-10 p-6 relative"> 
-                <h1 class="text-5xl font-extrabold text-gray-800 mb-3">Meet Aura <span class="text-pink-500">✨</span></h1>
-                <p class="text-lg text-gray-600 mb-0">Your AI beauty BFF for personalized skin & makeup advice.</p>
-                <!-- History Toggle Button (Unified into a single button) -->
-                <button id="toggle-history-btn" class="absolute top-4 right-4 btn btn-md bg-purple-500 text-white hover:bg-purple-600 border-none shadow-md rounded-full flex items-center space-x-2 pl-4 pr-2" title="View Recent Analyses"> 
-                    <span class="font-semibold">Recent Analyses</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.202 5 7.5 5A6.5 6.5 0 001 11.5c0 1.682.68 3.206 1.875 4.291m12-4.291c1.195-.915 2.176-2.583 2.176-4.291 0-1.682-.68-3.206-1.875-4.291A6.5 6.5 0 0016.5 5c-1.702 0-3.332.477-4.519 1.253zm0 13c1.195.915 2.176 2.583 2.176 4.291 0 1.682-.68 3.206-1.875 4.291A6.5 6.5 0 017.5 19c-1.702 0-3.332-.477-4.519-1.253L4.258 17.5c.854.721 1.954 1.127 3.242 1.127 1.288 0 2.388-.406 3.242-1.127z"/></svg>
-                </button>
-            </header>
+            <div class="relative w-full bg-white/60 backdrop-blur-lg shadow-lg rounded-b-3xl py-8 px-6 text-center mb-10"> <h1 class="text-5xl font-extrabold text-gray-800 mb-2 flicker-text">Meet Aura <span class="text-pink-500">✨</span></h1> <p class="text-lg text-gray-600">Your AI beauty BFF for personalized skin & makeup advice.</p>
+              <button id="toggle-history-btn"
+                  class="fixed top-5 right-5 z-50 w-12 h-12 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 shadow-xl flex items-center justify-center hover:scale-110 transition-transform duration-300 group animate-aura"
+                  title="Recent Analyses"> <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 6.253v13m0-13C10.832 5.477 9.202 5 7.5 5A6.5 6.5 0 001 11.5c0 1.682.68 3.206 1.875 4.291m12-4.291c1.195-.915 2.176-2.583 2.176-4.291 0-1.682-.68-3.206-1.875-4.291A6.5 6.5 0 0016.5 5c-1.702 0-3.332.477-4.519 1.253zm0 13c1.195.915 2.176 2.583 2.176 4.291 0 1.682-.68 3.206-1.875 4.291A6.5 6.5 0 017.5 19c-1.702 0-3.332-.477-4.519-1.253L4.258 17.5c.854.721 1.954 1.127 3.242 1.127 1.288 0 2.388-.406 3.242-1.127z" />
+                  </svg>
+              </button>
+            </div>
 
-            <form id="analysis-form" class="space-y-6 p-6">
-                <div class="form-group">
+            <form id="analysis-form" class="space-y-6 p-6 bg-white rounded-3xl shadow-xl mx-4 md:mx-auto max-w-2xl"> <div class="form-group">
                     <label for="mode-select" class="block text-gray-700 text-sm font-bold mb-2">Select Analysis Mode:</label>
-                    <select id="mode-select" name="mode" required class="select select-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
-                        <option value="skin-analyzer">Skin Analyzer</option>
+                    <select id="mode-select" name="mode" required class="select select-bordered w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300"> <option value="skin-analyzer">Skin Analyzer</option>
                         <option value="makeup-artist">Makeup Artist</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="photo-upload" class="block text-gray-700 text-sm font-bold mb-2">Upload a clear, well-lit photo of your face:</label>
-                    <input type="file" id="photo-upload" name="photo" accept="image/*" required class="file-input file-input-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
-                </div>
+                    <input type="file" id="photo-upload" name="photo" accept="image/*" required class="file-input file-input-bordered w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300"> </div>
 
-                <!-- Skin Analyzer Fields (visible by default) -->
                 <div id="skin-analyzer-fields" class="mode-fields space-y-4">
                     <div class="form-group">
                         <label for="skin-type" class="block text-gray-700 text-sm font-bold mb-2">Skin Type:</label>
-                        <select id="skin-type" name="skinType" class="select select-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                        <select id="skin-type" name="skinType" class="select select-bordered w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                             <option>Normal</option>
                             <option>Oily</option>
                             <option>Dry</option>
@@ -101,7 +86,7 @@
                     </div>
                     <div class="form-group">
                         <label for="skin-problem" class="block text-gray-700 text-sm font-bold mb-2">Main Concern:</label>
-                        <select id="skin-problem" name="skinProblem" class="select select-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                        <select id="skin-problem" name="skinProblem" class="select select-bordered w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                             <option>Acne</option>
                             <option>Dark Spots</option>
                             <option>Wrinkles & Fine Lines</option>
@@ -111,7 +96,7 @@
                     </div>
                     <div class="form-group">
                         <label for="age-group" class="block text-gray-700 text-sm font-bold mb-2">Age Group:</label>
-                        <select id="age-group" name="ageGroup" class="select select-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                        <select id="age-group" name="ageGroup" class="select select-bordered w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                             <option>13-19</option>
                             <option>20-29</option>
                             <option>30-39</option>
@@ -121,7 +106,7 @@
                     </div>
                     <div class="form-group">
                         <label for="lifestyle" class="block text-gray-700 text-sm font-bold mb-2">Lifestyle:</label>
-                        <select id="lifestyle" name="lifestyleFactor" class="select select-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                        <select id="lifestyle" name="lifestyleFactor" class="select select-bordered w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                             <option>Low Sun Exposure</option>
                             <option>High Sun Exposure</option>
                             <option>High Stress</option>
@@ -130,23 +115,22 @@
                     </div>
                 </div>
 
-                <!-- Makeup Artist Fields (hidden by default) -->
                 <div id="makeup-artist-fields" class="mode-fields space-y-4" style="display: none;">
                     <div class="form-group">
                         <label for="event-type" class="block text-gray-700 text-sm font-bold mb-2">Event Type:</label>
-                        <input id="event-type" type="text" name="eventType" placeholder="e.g., Wedding, Date Night" class="input input-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                        <input id="event-type" type="text" name="eventType" placeholder="e.g., Wedding, Date Night" class="input input-bordered w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                     </div>
                     <div class="form-group">
                         <label for="dress-type" class="block text-gray-700 text-sm font-bold mb-2">Outfit Type:</label>
-                        <input id="dress-type" type="text" name="dressType" placeholder="e.g., Silk Dress, Casual" class="input input-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                        <input id="dress-type" type="text" name="dressType" placeholder="e.g., Silk Dress, Casual" class="input input-bordered w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                     </div>
                     <div class="form-group">
                         <label for="dress-color" class="block text-gray-700 text-sm font-bold mb-2">Outfit Color:</label>
-                        <input id="dress-color" type="text" name="dressColor" placeholder="e.g., Red, Navy Blue" class="input input-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                        <input id="dress-color" type="text" name="dressColor" placeholder="e.g., Red, Navy Blue" class="input input-bordered w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                     </div>
                     <div class="form-group">
                         <label for="style-pref" class="block text-gray-700 text-sm font-bold mb-2">Style Preference:</label>
-                        <select id="style-pref" name="userStylePreference" class="select select-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                        <select id="style-pref" name="userStylePreference" class="select select-bordered w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                             <option value="Natural">Natural</option>
                             <option value="Glamorous">Glamorous</option>
                             <option value="Bold & Dramatic">Bold & Dramatic</option>
@@ -155,20 +139,14 @@
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn w-full btn btn-lg btn-secondary text-white bg-purple-500 hover:bg-purple-600 border-none px-8 py-3 rounded-full text-xl font-bold shadow-md transform transition-transform duration-200 hover:scale-105">Ask Aura</button>
-            </form>
+                <button type="submit" class="submit-btn w-full btn btn-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-8 py-4 rounded-full shadow-lg hover:scale-105 transition-all duration-300 animate-aura">Ask Aura</button> </form>
 
-            <!-- Result Container -->
             <div id="result-container" class="result-section mt-10 hidden">
-                <!-- Placeholder for the uploaded image -->
                 <div id="uploaded-image-display" class="mb-6 text-center"></div>
-                <!-- AI results will be injected here by script.js -->
-            </div>
+                </div>
 
-            <!-- Back to Main Menu Button -->
             <div class="text-center mt-8">
-                <button id="back-to-menu-btn" class="btn btn-lg btn-outline border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-white hidden">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-6 w-6 mr-2">
+                <button id="back-to-menu-btn" class="btn btn-lg bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold px-8 py-4 rounded-full shadow-lg hover:scale-105 transition-all duration-300 animate-aura hidden"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-6 w-6 mr-2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001m-4.992 0L14.475 7.75m1.548 1.598l.001.002zM12.519 21.424c-1.416 0-2.813-.424-4.075-1.168l-.75.66M16.023 9.348H4.992M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.181A6.87 6.87 0 007.66 19.7c.616.036 1.238.057 1.862.057 3.036 0 5.87-1.18 8-3.14M15.903 4.352c-.616-.036-1.238-.057-1.862-.057-3.036 0-5.87 1.18-8 3.14l-3.181-3.182c.98-.67 2.112-1.076 3.32-1.076h4.992zM12.519 21.424a6.87 6.87 0 005.155-2.09l.75-.66M12.519 21.424c-1.416 0-2.813-.424-4.075-1.168l-.75.66"></path>
                     </svg>
                     Start a New Glow-Up!
@@ -176,21 +154,17 @@
             </div>
         </div>
 
-        <!-- History Panel (initially hidden) -->
         <div id="history-panel" class="container mx-auto p-6 bg-white rounded-2xl shadow-xl max-w-4xl mt-8 hidden">
             <div class="history-header flex justify-between items-center mb-4">
                 <h2 class="text-3xl font-bold text-gray-800">Recent Analyses</h2>
                 <button id="clear-history-btn" class="btn btn-outline btn-error">Clear History</button>
             </div>
             <ul id="history-list" class="space-y-2">
-                <!-- History items will be added here -->
-            </ul>
+                </ul>
         </div>
     </div>
 
-    <!-- External Libraries (Marked.js for Markdown parsing) -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Your main application JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>
