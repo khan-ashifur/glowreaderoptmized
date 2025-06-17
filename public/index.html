@@ -4,22 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GlowReader AI Beauty Assistant</title>
+    <!-- IMPORTANT: Link to your custom CSS in the 'css' subfolder -->
     <link rel="stylesheet" href="css/style.css">
+    <!-- Link to Google Fonts (Poppins for a modern look) -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Link to DaisyUI (requires Tailwind CSS) -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <!-- Link to Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
 
+    <!-- Welcome Modal - This will appear on page load -->
     <div id="welcome-modal" class="modal-overlay">
+        <!-- Animated Stars/Particles for Premium Feel (These divs will be styled and animated in style.css) -->
+        <div class="star star-1"></div>
+        <div class="star star-2"></div>
+        <div class="star star-3"></div>
+        <div class="star star-4"></div>
+        <div class="star star-5"></div>
+        <div class="star star-6"></div>
+        <div class="star star-7"></div>
+        <div class="star star-8"></div>
+        <div class="star star-9"></div>
+        <div class="star star-10"></div>
+        <div class="star star-11"></div>
+        <div class="star star-12"></div>
+        <div class="star star-13"></div>
+        <div class="star star-14"></div>
+        <div class="star star-15"></div>
+
         <div class="modal-content">
-            <h2 class="text-3xl font-bold text-pink-600 mb-4">Hey, I'm Aura! ✨</h2>
-            <p class="text-gray-700 mb-6 text-lg">Sooo stoked you're here! I'm your new AI beauty BFF, ready to help you find the perfect look.</p>
-            <p class="text-gray-700 mb-8 text-lg">Just upload a clear photo, tell me a little about what you're looking for, and I'll give you some personalized ideas!</p>
-            <button id="close-modal-btn" class="btn btn-primary text-white bg-pink-500 hover:bg-pink-600 border-none px-8 py-3 rounded-full text-lg font-semibold shadow-md">Let's Glow!</button>
+            <!-- Glowing Aura pulse behind content (styled in CSS) -->
+            <div class="aura-pulse-glow"></div>
+
+            <h2 class="text-3xl md:text-4xl font-extrabold text-pink-600 mb-4 relative z-10">Hey, I'm Aura! ✨</h2>
+            <p class="text-gray-800 text-lg leading-relaxed relative z-10 mb-4">
+                Welcome to your personalized AI beauty journey. I’m here to glow you up with confidence 💋
+            </p>
+            <p class="text-base md:text-lg text-gray-600 relative z-10 mb-6">
+                Upload your best selfie and let Aura create personalized skincare tips or glam makeup just for you.
+            </p>
+            <button id="close-modal-btn" class="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg hover:scale-105 transition-all duration-300 relative z-10">
+                Let’s Glow 🌈
+            </button>
         </div>
     </div>
     
+    <!-- Loader Overlay - This will appear as a full-screen overlay when analyzing -->
     <div id="loader-overlay" class="loader-overlay hidden">
         <div class="loader-content">
             <span class="loading loading-spinner loading-lg text-purple-500"></span>
@@ -27,11 +59,14 @@
         </div>
     </div>
 
+    <!-- Main Content Area -->
     <div class="main-content min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 py-12">
         <div class="container mx-auto bg-white rounded-2xl shadow-xl max-w-4xl">
-            <header class="text-center mb-10 p-6 relative pt-16 sm:pt-6"> 
+            <!-- HEADER: Adjusted for vertical stacking of H1/P and aligned button/label -->
+            <header class="text-center mb-10 p-6 relative"> 
                 <h1 class="text-5xl font-extrabold text-gray-800 mb-3">Meet Aura <span class="text-pink-500">✨</span></h1>
                 <p class="text-lg text-gray-600 mb-0">Your AI beauty BFF for personalized skin & makeup advice.</p>
+                <!-- History Toggle Button (Unified into a single button) -->
                 <button id="toggle-history-btn" class="absolute top-4 right-4 btn btn-md bg-purple-500 text-white hover:bg-purple-600 border-none shadow-md rounded-full flex items-center space-x-2 pl-4 pr-2" title="View Recent Analyses"> 
                     <span class="font-semibold">Recent Analyses</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.202 5 7.5 5A6.5 6.5 0 001 11.5c0 1.682.68 3.206 1.875 4.291m12-4.291c1.195-.915 2.176-2.583 2.176-4.291 0-1.682-.68-3.206-1.875-4.291A6.5 6.5 0 0016.5 5c-1.702 0-3.332.477-4.519 1.253zm0 13c1.195.915 2.176 2.583 2.176 4.291 0 1.682-.68 3.206-1.875 4.291A6.5 6.5 0 017.5 19c-1.702 0-3.332-.477-4.519-1.253L4.258 17.5c.854.721 1.954 1.127 3.242 1.127 1.288 0 2.388-.406 3.242-1.127z"/></svg>
@@ -52,6 +87,7 @@
                     <input type="file" id="photo-upload" name="photo" accept="image/*" required class="file-input file-input-bordered w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                 </div>
 
+                <!-- Skin Analyzer Fields (visible by default) -->
                 <div id="skin-analyzer-fields" class="mode-fields space-y-4">
                     <div class="form-group">
                         <label for="skin-type" class="block text-gray-700 text-sm font-bold mb-2">Skin Type:</label>
@@ -94,6 +130,7 @@
                     </div>
                 </div>
 
+                <!-- Makeup Artist Fields (hidden by default) -->
                 <div id="makeup-artist-fields" class="mode-fields space-y-4" style="display: none;">
                     <div class="form-group">
                         <label for="event-type" class="block text-gray-700 text-sm font-bold mb-2">Event Type:</label>
@@ -121,10 +158,14 @@
                 <button type="submit" class="submit-btn w-full btn btn-lg btn-secondary text-white bg-purple-500 hover:bg-purple-600 border-none px-8 py-3 rounded-full text-xl font-bold shadow-md transform transition-transform duration-200 hover:scale-105">Ask Aura</button>
             </form>
 
+            <!-- Result Container -->
             <div id="result-container" class="result-section mt-10 hidden">
+                <!-- Placeholder for the uploaded image -->
                 <div id="uploaded-image-display" class="mb-6 text-center"></div>
-                </div>
+                <!-- AI results will be injected here by script.js -->
+            </div>
 
+            <!-- Back to Main Menu Button -->
             <div class="text-center mt-8">
                 <button id="back-to-menu-btn" class="btn btn-lg btn-outline border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-white hidden">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-6 w-6 mr-2">
@@ -135,17 +176,21 @@
             </div>
         </div>
 
+        <!-- History Panel (initially hidden) -->
         <div id="history-panel" class="container mx-auto p-6 bg-white rounded-2xl shadow-xl max-w-4xl mt-8 hidden">
             <div class="history-header flex justify-between items-center mb-4">
                 <h2 class="text-3xl font-bold text-gray-800">Recent Analyses</h2>
                 <button id="clear-history-btn" class="btn btn-outline btn-error">Clear History</button>
             </div>
             <ul id="history-list" class="space-y-2">
-                </ul>
+                <!-- History items will be added here -->
+            </ul>
         </div>
     </div>
 
+    <!-- External Libraries (Marked.js for Markdown parsing) -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Your main application JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>
